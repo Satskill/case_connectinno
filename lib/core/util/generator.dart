@@ -1,8 +1,8 @@
 import 'dart:math' as math;
 
+import 'package:case_connectinno/core/util/extension.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:pasaportsmart/core/util/extension.dart';
 
 class AppGenerator {
   /// Bir gün verildiğinde o günün içinde bulunduğu günlerin listesini verir

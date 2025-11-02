@@ -1,9 +1,9 @@
 import 'dart:convert';
 import 'dart:developer' as dev;
 
+import 'package:case_connectinno/core/util/extension.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
-import 'package:pasaportsmart/core/util/extension.dart';
 
 class LogService {
   LogService._();

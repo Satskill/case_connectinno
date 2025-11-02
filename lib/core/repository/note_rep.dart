@@ -1,5 +1,5 @@
+import 'package:case_connectinno/core/models/note.dart';
 import 'package:dio/dio.dart';
-import '../models/note_model.dart';
 import '../services/local_storage.dart';
 
 class NotesRepository {

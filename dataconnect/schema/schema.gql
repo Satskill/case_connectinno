@@ -1,0 +1,28 @@
+type User @table {
+  displayName: String!
+  createdAt: Timestamp!
+  email: String
+  photoUrl: String
+}
+
+type Category @table {
+  name: String!
+  createdAt: Timestamp!
+  user: User
+}
+
+type Location @table {
+  name: String!
+  createdAt: Timestamp!
+  user: User
+}
+
+type Item @table {
+  name: String!
+  createdAt: Timestamp!
+  description: String
+  photoUrl: String
+  user: User
+  category: Category
+  location: Location
+}

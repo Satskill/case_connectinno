@@ -1,6 +1,6 @@
+import 'package:case_connectinno/core/models/note.dart';
+import 'package:case_connectinno/core/repository/note_rep.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../data/models/note_model.dart';
-import '../../data/repositories/notes_repository.dart';
 
 class NotesState {
   final List<NoteModel> notes;

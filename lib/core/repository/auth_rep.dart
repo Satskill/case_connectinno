@@ -1,5 +1,5 @@
+import 'package:case_connectinno/core/models/user.dart';
 import 'package:dio/dio.dart';
-import '../models/user_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthRepository {

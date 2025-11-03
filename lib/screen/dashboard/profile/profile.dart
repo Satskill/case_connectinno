@@ -152,10 +152,10 @@ class _ProfileState extends State<Profile> {
                           decoration: BoxDecoration(
                             border: Border.all(
                               width: 1,
-                              color: AppColor.campaignRed.withValues(alpha: .7),
+                              color: AppColor.darkRed.withValues(alpha: .7),
                             ),
                             borderRadius: BorderRadius.circular(16.r),
-                            color: AppColor.campaignRed.withValues(alpha: .15),
+                            color: AppColor.darkRed.withValues(alpha: .15),
                           ),
                           child: Padding(
                             padding: AppUI.fullPadding * .9,
@@ -163,16 +163,14 @@ class _ProfileState extends State<Profile> {
                               children: [
                                 Image.asset(
                                   'assets/images/delete.png',
-                                  color: AppColor.campaignRed.withValues(
-                                    alpha: .7,
-                                  ),
+                                  color: AppColor.darkRed.withValues(alpha: .7),
                                   height: 28.h,
                                 ),
                                 AppUI.horizontalGap(.5),
                                 Text(
                                   'Hesabımı Sil',
                                   style: AppTextStyle.selectedSize.copyWith(
-                                    color: AppColor.campaignRed.withValues(
+                                    color: AppColor.darkRed.withValues(
                                       alpha: .7,
                                     ),
                                   ),

@@ -11,7 +11,7 @@ class AppColor {
   static const success = Color(0xffA4F4E7);
   static const warning = Color(0xffF4C790);
   static const error = Color(0xffE4626F);
-  static const campaignRed = Color(0xff810000);
+  static const darkRed = Color(0xff810000);
 
   static const policyBlue = Color(0xff007BFF);
 
@@ -19,9 +19,7 @@ class AppColor {
   static const activeBorderColor = Color(0xff0B7B69);
   static const boldBorderColor = Color(0xff5E5858);
   static const settingsColor = Color(0xff726B6C);
-  static const mailboxColor = Color(0xffFCD9DB);
   static const buttonPassiveColor = Color(0xffE6E6E6);
-  static const ingredientColor = Color(0xff867F80);
   static const passiveButtonTextColor = Color(0xff999494);
 
   static const white = Color(0xffffffff);

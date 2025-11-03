@@ -1,6 +1,5 @@
 import 'dart:math' as math;
 
-import 'package:case_connectinno/core/util/extension.dart';
 import 'package:flutter/material.dart';
 
 class AppGenerator {

@@ -1,5 +1,4 @@
 import 'package:case_connectinno/core/constant/color.dart';
-import 'package:case_connectinno/core/services/device_service.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';

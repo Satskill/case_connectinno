@@ -31,7 +31,6 @@ class NotesRepository {
           .map((doc) => NoteModel.fromJson({...doc.data(), 'id': doc.id}))
           .toList();
 
-      // 🟢 Pinli notları üste taşı
       notes.sort((a, b) {
         if (a.pinned && !b.pinned) return -1;
         if (!a.pinned && b.pinned) return 1;
@@ -84,7 +83,6 @@ class NotesRepository {
     }
   }
 
-  /// 🟢 Pin/Unpin toggle
   Future<NoteModel> togglePin(NoteModel note) async {
     try {
       final updated = note.copyWith(pinned: !note.pinned);

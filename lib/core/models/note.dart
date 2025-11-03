@@ -21,7 +21,6 @@ class NoteModel {
     this.deletedAt,
   });
 
-  /// Firestore ve JSON uyumlu parser
   factory NoteModel.fromJson(Map<String, dynamic> json) {
     DateTime? parseDate(dynamic value) {
       if (value == null) return null;
@@ -42,7 +41,6 @@ class NoteModel {
     );
   }
 
-  /// Firestore’a kaydetmek için JSON
   Map<String, dynamic> toJson() {
     return {
       'title': title,
@@ -55,7 +53,6 @@ class NoteModel {
     };
   }
 
-  /// Kopya oluşturma
   NoteModel copyWith({
     String? title,
     String? content,

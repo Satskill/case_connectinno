@@ -27,9 +27,7 @@ class TitleFormField extends StatelessWidget {
             ? Text(
                 title!,
                 style: AppTextStyle.cartText.copyWith(
-                  color: isPrimary
-                      ? AppColor.primary
-                      : AppColor.ingredientColor,
+                  color: isPrimary ? AppColor.primary : AppColor.gray,
                 ),
               )
             : const SizedBox(),

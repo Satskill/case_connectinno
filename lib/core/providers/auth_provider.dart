@@ -45,7 +45,6 @@ class AuthCubit extends Cubit<AuthState> {
 
   AuthCubit(this.repository) : super(const AuthState());
 
-  /// 🔹 App başlarken local storage'dan kullanıcıyı yükler
   Future<void> init() async {
     emit(state.copyWith(loading: true));
     try {
@@ -62,7 +61,6 @@ class AuthCubit extends Cubit<AuthState> {
     }
   }
 
-  /// 🔹 Giriş yapar ve local'e kaydeder
   Future<void> login(
     String email,
     String password,
@@ -80,7 +78,6 @@ class AuthCubit extends Cubit<AuthState> {
     }
   }
 
-  /// 🔹 Kayıt olur ve local'e kaydeder
   Future<void> register(
     String email,
     String password,
@@ -122,7 +119,6 @@ class AuthCubit extends Cubit<AuthState> {
     }
   }
 
-  /// 🔹 Hesabı siler ve local veriyi temizler
   Future<void> deleteAccount() async {
     emit(state.copyWith(loading: true));
     try {
@@ -134,20 +130,17 @@ class AuthCubit extends Cubit<AuthState> {
     }
   }
 
-  /// 🔹 Çıkış yapar ve local veriyi siler
   Future<void> logout() async {
     await repository.logout();
     await _clearLocalUser();
     emit(const AuthState(user: null));
   }
 
-  /// 🔸 SharedPreferences'e user kaydeder
   Future<void> _saveUserToLocal(UserModel user) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('user_data', jsonEncode(user.toJson()));
   }
 
-  /// 🔸 SharedPreferences'ten user siler
   Future<void> _clearLocalUser() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove('user_data');

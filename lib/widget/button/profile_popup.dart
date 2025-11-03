@@ -68,13 +68,13 @@ class ProfilePopup extends StatelessWidget {
                       Image.asset(
                         'assets/images/logout.png',
                         height: 20.h,
-                        color: AppColor.campaignRed,
+                        color: AppColor.darkRed,
                       ),
                       AppUI.horizontalGap(),
                       Text(
                         'Çıkış Yap',
                         style: AppTextStyle.profilePopUp.copyWith(
-                          color: AppColor.campaignRed,
+                          color: AppColor.darkRed,
                         ),
                       ),
                     ],

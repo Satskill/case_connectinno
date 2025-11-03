@@ -27,7 +27,6 @@ class NotesCubit extends Cubit<NotesState> {
 
   NotesCubit(this.repository) : super(const NotesState());
 
-  /// 🔄 Notları yükle
   Future<void> loadNotes() async {
     emit(state.copyWith(loading: true, error: null));
     try {
@@ -38,11 +37,10 @@ class NotesCubit extends Cubit<NotesState> {
     }
   }
 
-  /// ➕ Not ekle
   Future<void> addNote(NoteModel note, BuildContext context) async {
     try {
       await repository.createNote(note);
-      await loadNotes(); // 🔁 Firestore’dan tekrar yükle
+      await loadNotes();
 
       if (context.mounted) {
         _showDialog(context, 'Not Eklendi');
@@ -52,11 +50,10 @@ class NotesCubit extends Cubit<NotesState> {
     }
   }
 
-  /// ✏️ Not güncelle
   Future<void> updateNote(NoteModel note, BuildContext context) async {
     try {
       await repository.updateNote(note);
-      await loadNotes(); // 🔁 Firestore’dan tekrar yükle
+      await loadNotes();
 
       if (context.mounted) {
         _showDialog(context, 'Not Güncellendi');
@@ -66,11 +63,10 @@ class NotesCubit extends Cubit<NotesState> {
     }
   }
 
-  /// 🗑 Not sil
   Future<void> deleteNote(String id, BuildContext context) async {
     try {
       await repository.deleteNote(id);
-      await loadNotes(); // 🔁 Firestore’dan tekrar yükle
+      await loadNotes();
 
       if (context.mounted) {
         _showDialog(context, 'Not Silindi');
@@ -80,11 +76,10 @@ class NotesCubit extends Cubit<NotesState> {
     }
   }
 
-  /// ♻️ Not geri yükle
   Future<void> restore(String id) async {
     try {
       await repository.restoreNote(id);
-      await loadNotes(); // 🔁 Firestore’dan tekrar yükle
+      await loadNotes();
     } catch (e) {
       emit(state.copyWith(error: e.toString()));
     }
@@ -99,7 +94,6 @@ class NotesCubit extends Cubit<NotesState> {
     }
   }
 
-  /// ⚡️ Tekrar eden dialog fonksiyonu
   void _showDialog(BuildContext context, String title) {
     context.showAppDialog(
       AppAlertDialog(

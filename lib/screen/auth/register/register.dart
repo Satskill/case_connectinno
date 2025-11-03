@@ -67,8 +67,7 @@ class _RegisterState extends State<Register> {
                       children: [
                         AuthHeader(
                           title: 'Kayıt Ol',
-                          subtitle:
-                              'Teklif Gönderilen E-Posta Adresinizi Giriniz.',
+                          subtitle: 'Bilgilerinizi Giriniz.',
                         ),
                         20.verticalSpace,
                         Form(

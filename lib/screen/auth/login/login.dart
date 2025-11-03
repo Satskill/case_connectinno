@@ -31,119 +31,128 @@ class _LoginState extends State<Login> {
       extendBody: true,
       body: Stack(
         children: [
-          Column(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Expanded(
-                child: Image.asset(
-                  'assets/images/logo.png',
-                  width: MediaQuery.of(context).size.width * .7,
+          Expanded(
+            child: SingleChildScrollView(
+              child: SizedBox(
+                height: MediaQuery.of(context).size.height,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      child: Image.asset(
+                        'assets/images/logo.png',
+                        width: MediaQuery.of(context).size.width * .7,
+                      ),
+                    ),
+                    ConstrainedBox(
+                      constraints: BoxConstraints(
+                        maxHeight: MediaQuery.of(context).size.height * .75,
+                        minWidth: double.infinity,
+                      ),
+                      child: Image.asset(
+                        'assets/images/auth.png',
+                        fit: BoxFit.fitWidth,
+                        color: AppColor.primary,
+                        colorBlendMode: BlendMode.srcATop,
+                      ),
+                    ),
+                  ],
                 ),
               ),
-              ConstrainedBox(
-                constraints: BoxConstraints(
-                  maxHeight: MediaQuery.of(context).size.height * .75,
-                  minWidth: double.infinity,
-                ),
-                child: Image.asset(
-                  'assets/images/auth.png',
-                  fit: BoxFit.fitWidth,
-                  color: AppColor.primary,
-                  colorBlendMode: BlendMode.srcATop,
-                ),
-              ),
-            ],
+            ),
           ),
-          Column(
-            children: [
-              SizedBox(height: MediaQuery.of(context).size.height * .3),
-              SizedBox(
-                height: MediaQuery.of(context).size.height * .7,
-                child: Center(
-                  child: SingleChildScrollView(
-                    padding: AppUI.fullPadding,
-                    child: Column(
-                      children: [
-                        AuthHeader(
-                          title: 'Giriş Yap',
-                          subtitle:
-                              'Hesabınıza giriş yapmak için bilgilerinizi girin.',
-                        ),
-                        20.verticalSpace,
-                        Form(
-                          key: _formKey,
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              AppUI.verticalGap(),
-                              Container(
-                                decoration: BoxDecoration(
-                                  color: AppColor.white,
-                                  borderRadius: BorderRadius.circular(15.r),
-                                ),
-                                child: AppFormField(
-                                  controller: emailController,
-                                  padding: AppUI.fullPadding,
-                                  hintText: 'E-Postanızı giriniz',
-                                  keyboardType: TextInputType.emailAddress,
-                                  validator: AppValidator.emailValidator,
-                                  textInputAction: TextInputAction.next,
-                                ),
-                              ),
-                              AppUI.verticalGap(1.5),
-                              Container(
-                                decoration: BoxDecoration(
-                                  color: AppColor.white,
-                                  borderRadius: BorderRadius.circular(15.r),
-                                ),
-                                child: AppFormField(
-                                  hintText: 'Şifre',
-                                  obscureText: true,
-                                  controller: passwordController,
-                                  padding: AppUI.fullPadding,
-                                  textInputAction: TextInputAction.done,
-                                  validator: AppValidator.passwordValidator,
-                                  keyboardType: TextInputType.visiblePassword,
-                                ),
-                              ),
-                              AppUI.verticalGap(),
-                              AuthNavigationText(isLogin: true),
-                              AppUI.verticalGap(4),
-                              Padding(
-                                padding: AppUI.horizontal * 2,
-                                child: LoadingButton(
-                                  padding: AppUI.fullPadding / 1.5,
+          SingleChildScrollView(
+            child: Column(
+              children: [
+                SizedBox(height: MediaQuery.of(context).size.height * .3),
+                SizedBox(
+                  height: MediaQuery.of(context).size.height * .7,
+                  child: Center(
+                    child: SingleChildScrollView(
+                      padding: AppUI.fullPadding,
+                      child: Column(
+                        children: [
+                          AuthHeader(
+                            title: 'Giriş Yap',
+                            subtitle:
+                                'Hesabınıza giriş yapmak için bilgilerinizi girin.',
+                          ),
+                          20.verticalSpace,
+                          Form(
+                            key: _formKey,
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                AppUI.verticalGap(),
+                                Container(
                                   decoration: BoxDecoration(
-                                    color: AppColor.baseWhite,
+                                    color: AppColor.white,
                                     borderRadius: BorderRadius.circular(15.r),
                                   ),
-                                  onTap: () async {
-                                    if (_formKey.currentState!.validate()) {
-                                      await context.read<AuthCubit>().login(
-                                        emailController.text,
+                                  child: AppFormField(
+                                    controller: emailController,
+                                    padding: AppUI.fullPadding,
+                                    hintText: 'E-Postanızı giriniz',
+                                    keyboardType: TextInputType.emailAddress,
+                                    validator: AppValidator.emailValidator,
+                                    textInputAction: TextInputAction.next,
+                                  ),
+                                ),
+                                AppUI.verticalGap(1.5),
+                                Container(
+                                  decoration: BoxDecoration(
+                                    color: AppColor.white,
+                                    borderRadius: BorderRadius.circular(15.r),
+                                  ),
+                                  child: AppFormField(
+                                    hintText: 'Şifre',
+                                    obscureText: true,
+                                    controller: passwordController,
+                                    padding: AppUI.fullPadding,
+                                    textInputAction: TextInputAction.done,
+                                    validator: AppValidator.passwordValidator,
+                                    keyboardType: TextInputType.visiblePassword,
+                                  ),
+                                ),
+                                AppUI.verticalGap(),
+                                AuthNavigationText(isLogin: true),
+                                AppUI.verticalGap(4),
+                                Padding(
+                                  padding: AppUI.horizontal * 2,
+                                  child: LoadingButton(
+                                    padding: AppUI.fullPadding / 1.5,
+                                    decoration: BoxDecoration(
+                                      color: AppColor.baseWhite,
+                                      borderRadius: BorderRadius.circular(15.r),
+                                    ),
+                                    onTap: () async {
+                                      if (_formKey.currentState!.validate()) {
+                                        await context.read<AuthCubit>().login(
+                                          emailController.text,
 
-                                        passwordController.text,
-                                        context,
-                                      );
-                                    }
-                                  },
-                                  child: Text(
-                                    'Giriş Yap',
-                                    style: AppTextStyle.selectedSize.copyWith(
-                                      color: AppColor.primary,
+                                          passwordController.text,
+                                          context,
+                                        );
+                                      }
+                                    },
+                                    child: Text(
+                                      'Giriş Yap',
+                                      style: AppTextStyle.selectedSize.copyWith(
+                                        color: AppColor.primary,
+                                      ),
                                     ),
                                   ),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ],
       ),

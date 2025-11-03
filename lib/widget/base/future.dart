@@ -1,6 +1,6 @@
+import 'package:case_connectinno/core/util/extension.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:pasaportsmart/core/util/extension.dart';
 
 import 'loading.dart';
 
@@ -52,12 +52,14 @@ class AppFutureBuilder<T> extends StatelessWidget {
           key = const ValueKey('loading');
           child = SizedBox(
             key: key,
-            child: placeHolder ??
+            child:
+                placeHolder ??
                 Center(
                   child: LoadingWidget(
-                      size: loadingSize,
-                      color: loadingColor,
-                      text: loadingText),
+                    size: loadingSize,
+                    color: loadingColor,
+                    text: loadingText,
+                  ),
                 ),
           );
         } else if (snapshot.hasData && snapshot.data != null) {
@@ -71,10 +73,7 @@ class AppFutureBuilder<T> extends StatelessWidget {
           child = const UnknownErrorWidget(key: ValueKey('unknown'));
         }
 
-        return AnimatedSwitcher(
-          duration: 300.millisecond,
-          child: child,
-        );
+        return AnimatedSwitcher(duration: 300.millisecond, child: child);
       },
     );
   }

@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:case_connectinno/core/constant/app_text_style.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
@@ -6,7 +7,6 @@ import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:lottie/lottie.dart';
 
 import '../../core/constant/color.dart';
-import '../../core/constant/text_style.dart';
 
 class LoadingWidget extends StatelessWidget {
   final double? size;
@@ -21,16 +21,19 @@ class LoadingWidget extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          LoadingAnimationWidget.threeRotatingDots(color: color ?? Colors.white, size: size ?? 48.w),
-          6.h.verticalSpace,
-          Text(
-            text!,
-            textAlign: TextAlign.center,
+          LoadingAnimationWidget.threeRotatingDots(
+            color: color ?? Colors.white,
+            size: size ?? 48.w,
           ),
+          6.h.verticalSpace,
+          Text(text!, textAlign: TextAlign.center),
         ],
       );
     } else {
-      return LoadingAnimationWidget.threeRotatingDots(color: color ?? Colors.white, size: size ?? 48.w);
+      return LoadingAnimationWidget.threeRotatingDots(
+        color: color ?? Colors.white,
+        size: size ?? 48.w,
+      );
     }
   }
 }
@@ -66,8 +69,12 @@ class AppErrorWidget extends StatelessWidget {
             : Text(
                 'Hata Kodu: ${errorCode ?? 700}',
                 textAlign: TextAlign.center,
-                style: TextStyle(color: AppColor.gray, fontSize: 12.sp, fontWeight: FontWeight.w300),
-              )
+                style: TextStyle(
+                  color: AppColor.gray,
+                  fontSize: 12.sp,
+                  fontWeight: FontWeight.w300,
+                ),
+              ),
       ],
     );
   }
@@ -76,11 +83,7 @@ class AppErrorWidget extends StatelessWidget {
 class PageError extends StatelessWidget {
   final String? text;
   final bool isCode;
-  const PageError({
-    super.key,
-    this.text,
-    this.isCode = true,
-  });
+  const PageError({super.key, this.text, this.isCode = true});
 
   @override
   Widget build(BuildContext context) {
@@ -103,7 +106,7 @@ class PageError extends StatelessWidget {
             onPressed: () => context.go('/'),
             style: FilledButton.styleFrom(backgroundColor: AppColor.primary),
             child: const Text('Ana Sayfa'),
-          )
+          ),
         ],
       ),
     );
@@ -135,7 +138,7 @@ class NotFoundWidget extends StatelessWidget {
           text ?? 'Aradığınız kriterlere göre içerik bulunamadı',
           style: AppTextStyle.fieldText,
           textAlign: TextAlign.center,
-        )
+        ),
       ],
     );
   }
@@ -143,10 +146,7 @@ class NotFoundWidget extends StatelessWidget {
 
 class ImageError extends StatelessWidget {
   final dynamic error;
-  const ImageError({
-    super.key,
-    this.error,
-  });
+  const ImageError({super.key, this.error});
 
   @override
   Widget build(BuildContext context) {

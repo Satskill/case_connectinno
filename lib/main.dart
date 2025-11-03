@@ -5,7 +5,9 @@ import 'package:case_connectinno/core/providers/auth_provider.dart';
 import 'package:case_connectinno/core/providers/note_provider.dart';
 import 'package:case_connectinno/core/repository/auth_rep.dart';
 import 'package:case_connectinno/core/repository/note_rep.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dio/dio.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -13,12 +15,11 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:intl/date_symbol_data_http_request.dart' as intl;
-import 'package:intl/intl.dart';
 
 import 'firebase_options.dart';
 
-const appLocale = Locale('tr', 'TR');
+late FirebaseAuth auth;
+late FirebaseFirestore firestore;
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -30,6 +31,10 @@ Future<void> main() async {
     );
   }
 
+  auth = FirebaseAuth.instance;
+
+  firestore = FirebaseFirestore.instance;
+
   SystemChrome.setEnabledSystemUIMode(
     SystemUiMode.edgeToEdge,
     overlays: [SystemUiOverlay.top],
@@ -39,8 +44,6 @@ Future<void> main() async {
   );
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
 
-  Intl.defaultLocale = 'tr_TR';
-  await intl.initializeDateFormatting('tr_TR', '');
   await Future.delayed(const Duration(milliseconds: 500));
 
   runApp(const CaseConnectinnoApp());
@@ -59,7 +62,7 @@ class CaseConnectinnoApp extends StatelessWidget {
           create: (_) => AuthCubit(AuthRepository(dio))..init(),
         ),
         BlocProvider<NotesCubit>(
-          create: (_) => NotesCubit(NotesRepository(dio))..loadNotes(),
+          create: (_) => NotesCubit(NotesRepository())..loadNotes(),
         ),
       ],
       child: ScreenUtilInit(
@@ -76,12 +79,11 @@ class CaseConnectinnoApp extends StatelessWidget {
               GlobalWidgetsLocalizations.delegate,
               GlobalCupertinoLocalizations.delegate,
             ],
-            supportedLocales: const [appLocale],
-            locale: appLocale,
             builder: (context, child) {
               return MediaQuery(
-                data: MediaQuery.of(context)
-                    .copyWith(textScaler: TextScaler.noScaling),
+                data: MediaQuery.of(
+                  context,
+                ).copyWith(textScaler: TextScaler.noScaling),
                 child: child!,
               );
             },

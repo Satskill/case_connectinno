@@ -1,6 +1,7 @@
 import 'package:case_connectinno/core/models/user.dart';
+import 'package:case_connectinno/core/services/log.dart';
+import 'package:case_connectinno/main.dart';
 import 'package:dio/dio.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthRepository {
   final Dio _dio;
@@ -12,51 +13,78 @@ class AuthRepository {
     required String password,
     required String fullName,
   }) async {
-    final res = await _dio.post('/auth/register', data: {
-      'email': email,
-      'password': password,
-      'fullName': fullName,
-    });
+    final credential = await auth.createUserWithEmailAndPassword(
+      email: email,
+      password: password,
+    );
 
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString('auth_token', res.data['token']);
+    LogService.logLn('asdasdasdasd');
 
-    return UserModel.fromJson(res.data['user']);
+    final uid = credential.user!.uid;
+    final user = UserModel(id: uid, email: email, fullName: fullName);
+
+    LogService.logLn('saving');
+
+    await firestore.collection('users').doc(uid).set(user.toJson());
+
+    LogService.logLn('returning');
+
+    return user;
   }
 
   Future<UserModel> login({
     required String email,
     required String password,
   }) async {
-    final res = await _dio.post('/auth/login', data: {
-      'email': email,
-      'password': password,
-    });
+    final credential = await auth.signInWithEmailAndPassword(
+      email: email,
+      password: password,
+    );
 
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString('auth_token', res.data['token']);
+    final uid = credential.user!.uid;
+    final snapshot = await firestore.collection('users').doc(uid).get();
 
-    return UserModel.fromJson(res.data['user']);
+    if (!snapshot.exists) {
+      throw Exception('User profile not found in Firestore.');
+    }
+
+    return UserModel.fromJson(snapshot.data()!..['id'] = uid);
   }
 
   Future<void> logout() async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.remove('auth_token');
+    await auth.signOut();
   }
 
   Future<UserModel> updateProfile(UserModel user) async {
-    final res = await _dio.put('/auth/profile', data: user.toJson());
-    return UserModel.fromJson(res.data['user']);
+    final uid = auth.currentUser?.uid;
+    if (uid == null) throw Exception('User not logged in.');
+
+    await firestore.collection('users').doc(uid).update(user.toJson());
+    final updated = await firestore.collection('users').doc(uid).get();
+
+    return UserModel.fromJson(updated.data()!..['id'] = uid);
   }
 
   Future<void> deleteAccount() async {
-    await _dio.delete('/auth/delete');
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.remove('auth_token');
+    final uid = auth.currentUser?.uid;
+    if (uid == null) return;
+
+    await firestore.collection('users').doc(uid).delete();
+    await auth.currentUser?.delete();
   }
 
   Future<String?> getToken() async {
-    final prefs = await SharedPreferences.getInstance();
-    return prefs.getString('auth_token');
+    final user = auth.currentUser;
+    return user != null ? await user.getIdToken() : null;
+  }
+
+  Future<Response> getNotes() async {
+    final token = await getToken();
+    if (token == null) throw Exception('No auth token found.');
+
+    return _dio.get(
+      '/notes',
+      options: Options(headers: {'Authorization': 'Bearer $token'}),
+    );
   }
 }

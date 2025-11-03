@@ -1,70 +1,98 @@
 import 'package:case_connectinno/core/models/note.dart';
-import 'package:dio/dio.dart';
-import '../services/local_storage.dart';
+import 'package:case_connectinno/main.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class NotesRepository {
-  final Dio _dio;
-  static const cacheKey = 'cached_notes';
+  String get _uid {
+    final user = auth.currentUser;
+    if (user == null) throw Exception("Kullanıcı oturumu bulunamadı.");
+    return user.uid;
+  }
 
-  NotesRepository(this._dio);
+  CollectionReference<Map<String, dynamic>> get _notesRef =>
+      firestore.collection('users').doc(_uid).collection('notes');
 
-  Future<List<NoteModel>> getNotes({String? query, bool? pinned}) async {
+  Future<List<NoteModel>> getNotes({String? query}) async {
     try {
-      final response = await _dio.get('/notes', queryParameters: {
-        if (query != null) 'q': query,
-        if (pinned != null) 'pinned': pinned.toString(),
-      });
+      Query<Map<String, dynamic>> q = _notesRef.orderBy(
+        'createdAt',
+        descending: true,
+      );
 
-      final data = (response.data['notes'] as List)
-          .map((e) => NoteModel.fromJson(e))
+      if (query != null && query.isNotEmpty) {
+        q = q
+            .where('title', isGreaterThanOrEqualTo: query)
+            .where('title', isLessThanOrEqualTo: '$query\uf8ff');
+      }
+
+      final snapshot = await q.get();
+
+      final notes = snapshot.docs
+          .map((doc) => NoteModel.fromJson({...doc.data(), 'id': doc.id}))
           .toList();
 
-      await LocalStorage.save(cacheKey, data.map((e) => e.toJson()).toList());
-      return data;
-    } catch (_) {
-      final cached = await LocalStorage.loadList(cacheKey);
-      return cached.map((e) => NoteModel.fromJson(e)).toList();
+      // 🟢 Pinli notları üste taşı
+      notes.sort((a, b) {
+        if (a.pinned && !b.pinned) return -1;
+        if (!a.pinned && b.pinned) return 1;
+        return b.createdAt?.compareTo(a.createdAt ?? DateTime.now()) ?? 0;
+      });
+
+      return notes;
+    } catch (e) {
+      throw Exception("Notlar yüklenemedi: $e");
     }
   }
 
   Future<NoteModel> createNote(NoteModel note) async {
     try {
-      final response = await _dio.post('/notes', data: note.toJson());
-      return NoteModel.fromJson({...response.data['data'], 'id': response.data['id']});
-    } catch (_) {
-      // offline queue mantığı
-      final offline = await LocalStorage.loadList('offline_notes');
-      offline.add(note.toJson());
-      await LocalStorage.save('offline_notes', offline);
-      return note;
+      final data = note.toJson()..['createdAt'] = FieldValue.serverTimestamp();
+      final docRef = await _notesRef.add(data);
+      final doc = await docRef.get();
+      return NoteModel.fromJson({...doc.data()!, 'id': doc.id});
+    } catch (e) {
+      throw Exception("Not oluşturulamadı: $e");
     }
-  }
-
-  Future<void> syncOffline() async {
-    final offlineNotes = await LocalStorage.loadList('offline_notes');
-    if (offlineNotes.isEmpty) return;
-
-    for (final n in offlineNotes) {
-      try {
-        await _dio.post('/notes', data: n);
-      } catch (_) {
-        continue;
-      }
-    }
-    await LocalStorage.clear('offline_notes');
   }
 
   Future<NoteModel> updateNote(NoteModel note) async {
-    final response = await _dio.put('/notes/${note.id}', data: note.toJson());
-    return NoteModel.fromJson({...response.data['data'], 'id': response.data['id']});
+    try {
+      final data = note.toJson()..['updatedAt'] = FieldValue.serverTimestamp();
+      await _notesRef.doc(note.id).update(data);
+      final updatedDoc = await _notesRef.doc(note.id).get();
+      return NoteModel.fromJson({...updatedDoc.data()!, 'id': note.id});
+    } catch (e) {
+      throw Exception("Not güncellenemedi: $e");
+    }
   }
 
-  Future<void> deleteNote(String id, {bool force = false}) async {
-    await _dio.delete('/notes/$id', queryParameters: {'force': force.toString()});
+  Future<void> deleteNote(String id) async {
+    try {
+      await _notesRef.doc(id).delete();
+    } catch (e) {
+      throw Exception("Not silinemedi: $e");
+    }
   }
 
   Future<NoteModel> restoreNote(String id) async {
-    final response = await _dio.post('/notes/$id/restore');
-    return NoteModel.fromJson({...response.data['data'], 'id': response.data['id']});
+    try {
+      await _notesRef.doc(id).update({'deleted': false});
+      final restored = await _notesRef.doc(id).get();
+      return NoteModel.fromJson({...restored.data()!, 'id': id});
+    } catch (e) {
+      throw Exception("Not geri yüklenemedi: $e");
+    }
+  }
+
+  /// 🟢 Pin/Unpin toggle
+  Future<NoteModel> togglePin(NoteModel note) async {
+    try {
+      final updated = note.copyWith(pinned: !note.pinned);
+      await _notesRef.doc(note.id).update({'pinned': updated.pinned});
+      final doc = await _notesRef.doc(note.id).get();
+      return NoteModel.fromJson({...doc.data()!, 'id': doc.id});
+    } catch (e) {
+      throw Exception("Pin durumu güncellenemedi: $e");
+    }
   }
 }

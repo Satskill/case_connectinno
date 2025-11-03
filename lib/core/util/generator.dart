@@ -2,7 +2,6 @@ import 'dart:math' as math;
 
 import 'package:case_connectinno/core/util/extension.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 
 class AppGenerator {
   /// Bir gün verildiğinde o günün içinde bulunduğu günlerin listesini verir
@@ -13,7 +12,10 @@ class AppGenerator {
   /// //Çıktı Aşağıdaki gibi olur
   ///[null,DateTime(2022,2,1),DateTime(2022,2,2),...,DateTime(2022,2,28)]
   ///```
-  static List<DateTime?> getDaysInMonth(DateTime date, {bool isNullable = true}) {
+  static List<DateTime?> getDaysInMonth(
+    DateTime date, {
+    bool isNullable = true,
+  }) {
     List<DateTime?> daysInMonth = [];
     DateTime firstDay = DateTime(date.year, date.month, 1);
     DateTime lastDay = DateTime(date.year, date.month + 1, 0);
@@ -67,7 +69,9 @@ class AppGenerator {
   ///```dart
   ///getDayInMonths([DateTime(2022,1,1), DateTime(2022,2,1), DateTime(2022,3,1)]);
   ///```
-  static Map<DateTime, List<DateTime?>> getDaysInMonths(List<DateTime> dateList) {
+  static Map<DateTime, List<DateTime?>> getDaysInMonths(
+    List<DateTime> dateList,
+  ) {
     Map<DateTime, List<DateTime?>> result = {};
 
     for (var date in dateList) {
@@ -86,7 +90,10 @@ class AppGenerator {
     return DateTime(year, month);
   }
 
-  static List<DateTime> convertToDateTimeList(List<String> list, {String pattern = '-'}) {
+  static List<DateTime> convertToDateTimeList(
+    List<String> list, {
+    String pattern = '-',
+  }) {
     List<DateTime> dateList = [];
     for (var str in list) {
       dateList.add(convertToDateTime(str, pattern: pattern));
@@ -94,21 +101,8 @@ class AppGenerator {
     return dateList;
   }
 
-  static Color randomColor() => Color((math.Random().nextDouble() * 0xFFFFFF).toInt()).withOpacity(1.0);
-
-  static String appointmentDateText({required DateTime start, required DateTime end}) {
-    if (start.year != DateTime.now().year) {
-      if (start.isSameDay(end)) {
-        return '${DateFormat.yMMMMd().format(start)} ${DateFormat.Hm().format(start)} - ${DateFormat.Hm().format(end)}';
-      }
-      return '${DateFormat("dd MMMM yyyy HH:mm").format(start)} - ${DateFormat("dd MMMM yyyy HH:mm").format(end)}';
-    } else {
-      if (start.isSameDay(end)) {
-        return '${DateFormat.MMMMd().format(start)} ${DateFormat.Hm().format(start)} - ${DateFormat.Hm().format(end)}';
-      }
-      return '${DateFormat("dd MMMM HH:mm").format(start)} - ${DateFormat("dd MMMM HH:mm").format(end)}';
-    }
-  }
+  static Color randomColor() =>
+      Color((math.Random().nextDouble() * 0xFFFFFF).toInt()).withOpacity(1.0);
 
   /// Takvim için bir TimeOfDay to double çevirici. TimePicker ile aldığımız verinin Takvim için gereken double değere çevirilme işlemini yapar
   static double timeOfDayToDouble(TimeOfDay time) {

@@ -1,7 +1,11 @@
 import 'dart:convert';
 import 'package:case_connectinno/core/models/user.dart';
 import 'package:case_connectinno/core/repository/auth_rep.dart';
+import 'package:case_connectinno/core/services/log.dart';
+import 'package:case_connectinno/main.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthState {
@@ -9,17 +13,9 @@ class AuthState {
   final bool loading;
   final String? error;
 
-  const AuthState({
-    this.user,
-    this.loading = false,
-    this.error,
-  });
+  const AuthState({this.user, this.loading = false, this.error});
 
-  AuthState copyWith({
-    UserModel? user,
-    bool? loading,
-    String? error,
-  }) {
+  AuthState copyWith({UserModel? user, bool? loading, String? error}) {
     return AuthState(
       user: user ?? this.user,
       loading: loading ?? this.loading,
@@ -27,6 +23,22 @@ class AuthState {
     );
   }
 }
+
+class AuthInitial extends AuthState {}
+
+class AuthLoading extends AuthState {}
+
+class AuthSuccess extends AuthState {
+  final String message;
+  AuthSuccess({required this.message});
+}
+
+class AuthError extends AuthState {
+  final String error;
+  AuthError(this.error);
+}
+
+class AuthLoggedOut extends AuthState {}
 
 class AuthCubit extends Cubit<AuthState> {
   final AuthRepository repository;
@@ -51,42 +63,62 @@ class AuthCubit extends Cubit<AuthState> {
   }
 
   /// 🔹 Giriş yapar ve local'e kaydeder
-  Future<void> login(String email, String password) async {
+  Future<void> login(
+    String email,
+    String password,
+    BuildContext context,
+  ) async {
     emit(state.copyWith(loading: true));
     try {
       final user = await repository.login(email: email, password: password);
       await _saveUserToLocal(user);
       emit(state.copyWith(user: user, loading: false));
+
+      context.go('/');
     } catch (e) {
       emit(state.copyWith(error: e.toString(), loading: false));
     }
   }
 
   /// 🔹 Kayıt olur ve local'e kaydeder
-  Future<void> register(String email, String password, String fullName) async {
+  Future<void> register(
+    String email,
+    String password,
+    String fullName,
+    BuildContext context,
+  ) async {
     emit(state.copyWith(loading: true));
     try {
+      LogService.logLn('fsdfsdf');
       final user = await repository.register(
         email: email,
         password: password,
         fullName: fullName,
       );
+
+      LogService.logLn(user.toJson().toString());
       await _saveUserToLocal(user);
       emit(state.copyWith(user: user, loading: false));
+
+      context.go('/');
     } catch (e) {
       emit(state.copyWith(error: e.toString(), loading: false));
     }
   }
 
-  /// 🔹 Profil günceller ve local'i senkronize eder
-  Future<void> updateProfile(UserModel updatedUser) async {
-    emit(state.copyWith(loading: true));
+  Future<void> updateUserName(String newName) async {
     try {
-      final newUser = await repository.updateProfile(updatedUser);
-      await _saveUserToLocal(newUser);
-      emit(state.copyWith(user: newUser, loading: false));
+      emit(AuthLoading());
+      final uid = auth.currentUser?.uid;
+      if (uid == null) throw Exception("Kullanıcı oturumu bulunamadı");
+
+      await firestore.collection('users').doc(uid).update({
+        'fullName': newName,
+      });
+
+      emit(AuthSuccess(message: "Ad soyad başarıyla güncellendi."));
     } catch (e) {
-      emit(state.copyWith(error: e.toString(), loading: false));
+      emit(AuthError(e.toString()));
     }
   }
 

@@ -31,33 +31,31 @@ class _LoginState extends State<Login> {
       extendBody: true,
       body: Stack(
         children: [
-          Expanded(
-            child: SingleChildScrollView(
-              child: SizedBox(
-                height: MediaQuery.of(context).size.height,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Expanded(
-                      child: Image.asset(
-                        'assets/images/logo.png',
-                        width: MediaQuery.of(context).size.width * .7,
-                      ),
+          SingleChildScrollView(
+            child: SizedBox(
+              height: MediaQuery.of(context).size.height,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Expanded(
+                    child: Image.asset(
+                      'assets/images/logo.png',
+                      width: MediaQuery.of(context).size.width * .7,
                     ),
-                    ConstrainedBox(
-                      constraints: BoxConstraints(
-                        maxHeight: MediaQuery.of(context).size.height * .75,
-                        minWidth: double.infinity,
-                      ),
-                      child: Image.asset(
-                        'assets/images/auth.png',
-                        fit: BoxFit.fitWidth,
-                        color: AppColor.primary,
-                        colorBlendMode: BlendMode.srcATop,
-                      ),
+                  ),
+                  ConstrainedBox(
+                    constraints: BoxConstraints(
+                      maxHeight: MediaQuery.of(context).size.height * .75,
+                      minWidth: double.infinity,
                     ),
-                  ],
-                ),
+                    child: Image.asset(
+                      'assets/images/auth.png',
+                      fit: BoxFit.fitWidth,
+                      color: AppColor.primary,
+                      colorBlendMode: BlendMode.srcATop,
+                    ),
+                  ),
+                ],
               ),
             ),
           ),
